@@ -1,0 +1,48 @@
+{
+  "name": "openclaw-status",
+  "version": "1.0.0",
+  "description": "System tray application to monitor and control OpenClaw Gateway",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "dist": "electron-builder",
+    "generate-icons": "node scripts/generate-icons.js"
+  },
+  "author": "Harlane Castro",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "dependencies": {
+    "sharp": "^0.33.0"
+  },
+  "build": {
+    "appId": "ai.openclaw.status",
+    "productName": "OpenClaw Status",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "logs.html",
+      "about.html",
+      "locales/**",
+      "contributors.json",
+      "assets/**"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "installerHeaderIcon": "assets/icon.ico"
+    }
+  }
+}

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw Logs</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
+
+    body {
+      font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+      background: #0d1117;
+      color: #c9d1d9;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #161b22 0%, #1a1e2e 100%);
+      border-bottom: 1px solid #30363d;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .header-icon {
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, #FF6B4A, #E74C3C);
+      border-radius: 4px;
+    }
+
+    .header h1 {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #e6edf3;
+    }
+
+    .header .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: rgba(255, 107, 74, 0.15);
+      color: #FF6B4A;
+      border: 1px solid rgba(255, 107, 74, 0.3);
+      display: flex;
+      align-items: center;
+    }
+
+    .header-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      background: #21262d;
+      border: 1px solid rgba(240, 246, 252, 0.1);
+      color: #c9d1d9;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: #30363d;
+      border-color: #8b949e;
+    }
+
+    .btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .btn-danger:hover {
+      background: #da3633;
+      color: #fff;
+      border-color: #f85149;
+    }
+
+    .logs-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+      font-size: 12px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .logs-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    .logs-container::-webkit-scrollbar-track {
+      background: #0d1117;
+    }
+    .logs-container::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 4px;
+    }
+    .logs-container::-webkit-scrollbar-thumb:hover {
+      background: #484f58;
+    }
+
+    .log-line {
+      padding: 2px 0;
+      border-bottom: 1px solid rgba(48, 54, 61, 0.3);
+    }
+
+    .log-line:hover {
+      background: rgba(48, 54, 61, 0.3);
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      color: #8b949e;
+      font-size: 14px;
+    }
+
+    .loading .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #30363d;
+      border-top-color: #FF6B4A;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-msg {
+      color: #f85149;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      padding: 40px;
+      font-size: 14px;
+    }
+
+    .empty-msg {
+      color: #8b949e;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      padding: 40px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-icon"></div>
+    <h1 id="title">OpenClaw Logs</h1>
+    <div class="header-actions">
+      <button class="btn" id="refreshBtn">
+        <svg fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 104.546 2.914.5.5 0 01.908-.417A6 6 0 118 2v1z"/><path d="M8 4.466V.534a.25.25 0 01.41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 018 4.466z"/></svg>
+        Atualizar
+      </button>
+      <button class="btn" id="copyBtn">
+        <svg fill="currentColor" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 00-2 2V14a2 2 0 002 2h10a2 2 0 002-2V3.5a2 2 0 00-2-2h-1c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2zm1-1h6c.6 0 1 .4 1 1v1H4v-1c0-.6.4-1 1-1zM2 3.5a1 1 0 011-1h1v1a1 1 0 001 1h6a1 1 0 001-1v-1h1a1 1 0 011 1V14a1 1 0 01-1 1H3a1 1 0 01-1-1V3.5z"/></svg>
+        Copiar
+      </button>
+      <button class="btn btn-danger" id="clearBtn">
+        <svg fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 016 6v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm2.5 0a.5.5 0 01.5.5v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm3 .5a.5.5 0 00-1 0v6a.5.5 0 001 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 01-1-1V2a1 1 0 011-1H6a1 1 0 011-1h2a1 1 0 011 1h3.5a1 1 0 011 1v1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+        Limpar
+      </button>
+      <span class="badge" id="badge">last 100</span>
+    </div>
+  </div>
+  <div class="logs-container" id="logsContainer">
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <span>Loading logs...</span>
+    </div>
+  </div>
+
+  <script>
+    const container = document.getElementById('logsContainer');
+    const loading = document.getElementById('loading');
+    const title = document.getElementById('title');
+    let currentLang = {};
+
+    // 1. Initial Translate
+    async function initLang() {
+      if (window.openclawBridge && window.openclawBridge.getLang) {
+        currentLang = await window.openclawBridge.getLang();
+        title.textContent = currentLang.logs_title || 'OpenClaw Logs';
+        if (loading) loading.querySelector('span').textContent = currentLang.logs_loading || 'Loading logs...';
+      }
+    }
+    
+    initLang();
+
+    // 2. Rendering Logic
+    function renderLogs(data) {
+      if (data.lang) {
+        currentLang = data.lang;
+        title.textContent = currentLang.logs_title || 'OpenClaw Logs';
+      }
+
+      if (data.error) {
+        container.innerHTML = `<div class="error-msg">${currentLang.logs_error || 'Failed to load logs'}</div>`;
+        return;
+      }
+
+      if (!data.logs || data.logs.trim() === '') {
+        container.innerHTML = `<div class="empty-msg">${currentLang.logs_empty || 'No logs found'}</div>`;
+        return;
+      }
+
+      // Filter lines by last clear timestamp
+      const clearedAt = localStorage.getItem('logsClearedAt');
+      let lines = data.logs.split('\n').filter(l => l.trim());
+
+      if (clearedAt) {
+        const clearTime = parseInt(clearedAt, 10);
+        lines = lines.filter(line => {
+          // Openclaw logs start with ISO date: 2026-03-01T14:27:56.603Z
+          const match = line.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z)/);
+          if (match) {
+            const logTime = new Date(match[1]).getTime();
+            return logTime >= clearTime;
+          }
+          return true; // if no timestamp, keep it
+        });
+      }
+
+      if (lines.length === 0) {
+        container.innerHTML = `<div class="empty-msg">${currentLang.logs_empty || 'No logs found'}</div>`;
+        return;
+      }
+
+      container.innerHTML = lines.map(line =>
+        `<div class="log-line">${escapeHtml(line)}</div>`
+      ).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // 3. Listen for initial logs payload (from main.js window creation)
+    if (window.openclawBridge && window.openclawBridge.onLogsData) {
+      window.openclawBridge.onLogsData((data) => {
+        renderLogs(data);
+      });
+    }
+
+    // 4. Buttons functionality
+    document.getElementById('refreshBtn').addEventListener('click', async () => {
+      container.innerHTML = `
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+          <span>${currentLang.logs_loading || 'Loading logs...'}</span>
+        </div>
+      `;
+      if (window.openclawBridge && window.openclawBridge.refreshLogs) {
+        try {
+          const result = await window.openclawBridge.refreshLogs();
+          renderLogs(result);
+        } catch (err) {
+          renderLogs({ error: true, lang: currentLang });
+        }
+      }
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('copyBtn');
+      const container = document.getElementById('logsContainer');
+      const lines = Array.from(container.querySelectorAll('.log-line'))
+                         .map(el => el.textContent)
+                         .join('\n');
+      
+      if (!lines) return;
+
+      try {
+        await navigator.clipboard.writeText(lines);
+        const origHtml = btn.innerHTML;
+        btn.innerHTML = `<svg fill="currentColor" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg> Copiado!`;
+        btn.style.color = '#3fb950';
+        btn.style.borderColor = '#3fb950';
+        setTimeout(() => {
+          btn.innerHTML = origHtml;
+          btn.style.color = '';
+          btn.style.borderColor = '';
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy', err);
+      }
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', async () => {
+      const confirmMsg = currentLang.logs_clear_confirm || 'Are you sure you want to clear the logs? This will delete the physical files.';
+      if (!confirm(confirmMsg)) return;
+
+      const container = document.getElementById('logsContainer');
+      const badge = document.getElementById('badge');
+      
+      // Clear UI
+      localStorage.setItem('logsClearedAt', Date.now().toString());
+      container.innerHTML = `<div class="empty-msg">${currentLang.logs_cleared || 'Logs cleared successfully'}</div>`;
+      badge.style.display = 'none';
+
+      // Call desktop IPC to clear physical files
+      if (window.openclawBridge && window.openclawBridge.clearLogs) {
+        await window.openclawBridge.clearLogs();
+      }
+    });
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

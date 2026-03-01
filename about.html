@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About OpenClaw Status</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+    }
+
+    .about-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 40px;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 4px 12px rgba(255, 107, 74, 0.3));
+    }
+
+    .app-name {
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #FF6B4A, #E74C3C);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+    }
+
+    .version {
+      font-size: 12px;
+      color: #8b949e;
+      margin-bottom: 24px;
+    }
+
+    .section {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #8b949e;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #21262d;
+    }
+
+    .contributor {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      background: #161b22;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: border-color 0.2s, background 0.2s;
+      cursor: default;
+    }
+
+    .contributor:hover {
+      border-color: #30363d;
+      background: #1a1e2e;
+    }
+
+    .contributor-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FF6B4A, #E74C3C);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: white;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .contributor-info {
+      flex: 1;
+    }
+
+    .contributor-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e6edf3;
+    }
+
+    .contributor-role {
+      font-size: 11px;
+      color: #8b949e;
+    }
+
+    .contributor-link {
+      font-size: 12px;
+      color: #58a6ff;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .contributor-link:hover {
+      color: #79c0ff;
+      text-decoration: underline;
+    }
+
+    .no-contributors {
+      font-size: 13px;
+      color: #8b949e;
+      text-align: center;
+      padding: 12px;
+      font-style: italic;
+    }
+
+    .contribute-cta {
+      margin-top: 8px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, rgba(255, 107, 74, 0.12), rgba(231, 76, 60, 0.12));
+      border: 1px solid rgba(255, 107, 74, 0.25);
+      border-radius: 8px;
+      text-align: center;
+      font-size: 12px;
+      color: #FF6B4A;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      width: 100%;
+    }
+
+    .contribute-cta:hover {
+      background: linear-gradient(135deg, rgba(255, 107, 74, 0.2), rgba(231, 76, 60, 0.2));
+      border-color: rgba(255, 107, 74, 0.4);
+    }
+
+    .about-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    .about-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .about-container::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="about-container">
+    <svg class="logo" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FF6B4A"/>
+          <stop offset="100%" stop-color="#E74C3C"/>
+        </linearGradient>
+      </defs>
+      <path d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z" fill="url(#lg)"/>
+      <path d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z" fill="url(#lg)"/>
+      <path d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z" fill="url(#lg)"/>
+      <path d="M45 15 Q35 5 30 8" stroke="#FF6B4A" stroke-width="2" stroke-linecap="round"/>
+      <path d="M75 15 Q85 5 90 8" stroke="#FF6B4A" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="45" cy="35" r="6" fill="#1a1a2e"/>
+      <circle cx="75" cy="35" r="6" fill="#1a1a2e"/>
+      <circle cx="46" cy="34" r="2" fill="#00D4FF"/>
+      <circle cx="76" cy="34" r="2" fill="#00D4FF"/>
+    </svg>
+
+    <div class="app-name">OpenClaw Status</div>
+    <div class="version" id="version">Version 1.0.0</div>
+
+    <div class="section" id="developerSection">
+      <div class="section-title" id="devTitle">Developer</div>
+      <div id="developerList"></div>
+    </div>
+
+    <div class="section" id="contributorsSection">
+      <div class="section-title" id="contribTitle">Contributors</div>
+      <div id="contributorsList"></div>
+    </div>
+
+    <div class="contribute-cta" id="contributeCta" onclick="openGithub()">
+      Want to contribute? Visit our GitHub!
+    </div>
+  </div>
+
+  <script>
+    window.openclawBridge.onAboutData((data) => {
+      const lang = data.lang || {};
+
+      document.getElementById('version').textContent =
+        `${lang.about_version || 'Version'} ${data.version}`;
+      document.getElementById('devTitle').textContent =
+        lang.about_developer || 'Developer';
+      document.getElementById('contribTitle').textContent =
+        lang.about_contributors || 'Contributors';
+      document.getElementById('contributeCta').textContent =
+        lang.about_contribute || 'Want to contribute? Visit our GitHub!';
+
+      const developerList = document.getElementById('developerList');
+      const contributorsList = document.getElementById('contributorsList');
+
+      const allContribs = data.contributors || [];
+      const creators = allContribs.filter(c => c.role === 'Creator');
+      const others = allContribs.filter(c => c.role !== 'Creator');
+
+      // Render creators under Developer section
+      creators.forEach(c => {
+        developerList.appendChild(createContributorCard(c));
+      });
+
+      // Render other contributors
+      if (others.length > 0) {
+        others.forEach(c => {
+          contributorsList.appendChild(createContributorCard(c));
+        });
+      } else {
+        contributorsList.innerHTML =
+          `<div class="no-contributors">${lang.about_no_contributors || 'No additional contributors yet.'}</div>`;
+      }
+    });
+
+    function createContributorCard(contributor) {
+      const card = document.createElement('div');
+      card.className = 'contributor';
+
+      const initials = contributor.name
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+
+      card.innerHTML = `
+        <div class="contributor-avatar">${initials}</div>
+        <div class="contributor-info">
+          <div class="contributor-name">${escapeHtml(contributor.name)}</div>
+          <div class="contributor-role">${escapeHtml(contributor.role || 'Contributor')}</div>
+        </div>
+        ${contributor.github
+          ? `<a class="contributor-link" onclick="openUrl('${escapeHtml(contributor.github)}')">GitHub</a>`
+          : ''
+        }
+      `;
+
+      return card;
+    }
+
+    function openGithub() {
+      openUrl('https://github.com/harlanecastro/openclaw-status');
+    }
+
+    function openUrl(url) {
+      // Use shell.openExternal via IPC if available, fallback to window.open
+      if (window.openclawBridge && window.openclawBridge.openExternal) {
+        window.openclawBridge.openExternal(url);
+      } else {
+        window.open(url, '_blank');
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
