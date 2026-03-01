@@ -11,15 +11,9 @@ if (!gotLock) { app.quit(); }
 
 // ─── Paths ──────────────────────────────────────────────────────────────────
 const isDev = !app.isPackaged;
-const assetsPath = isDev
-  ? path.join(__dirname, 'assets')
-  : path.join(process.resourcesPath, 'app', 'assets');
-const localesPath = isDev
-  ? path.join(__dirname, 'locales')
-  : path.join(process.resourcesPath, 'app', 'locales');
-const contributorsPath = isDev
-  ? path.join(__dirname, 'contributors.json')
-  : path.join(process.resourcesPath, 'app', 'contributors.json');
+const assetsPath = path.join(__dirname, 'assets');
+const localesPath = path.join(__dirname, 'locales');
+const contributorsPath = path.join(__dirname, 'contributors.json');
 const settingsPath = path.join(app.getPath('userData'), 'settings.json');
 
 // ─── Settings ───────────────────────────────────────────────────────────────
@@ -282,9 +276,7 @@ function openLogsWindow() {
     autoHideMenuBar: true
   });
 
-  const logsHtmlPath = isDev
-    ? path.join(__dirname, 'logs.html')
-    : path.join(process.resourcesPath, 'app', 'logs.html');
+  const logsHtmlPath = path.join(__dirname, 'logs.html');
 
   logsWindow.loadFile(logsHtmlPath);
 
@@ -323,9 +315,7 @@ function openAboutWindow() {
     autoHideMenuBar: true
   });
 
-  const aboutHtmlPath = isDev
-    ? path.join(__dirname, 'about.html')
-    : path.join(process.resourcesPath, 'app', 'about.html');
+  const aboutHtmlPath = path.join(__dirname, 'about.html');
 
   aboutWindow.loadFile(aboutHtmlPath);
 
