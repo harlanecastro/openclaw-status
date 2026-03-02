@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const net = require('net');
 const os = require('os');
+const http = require('http');
 
 // ─── Prevent multiple instances ─────────────────────────────────────────────
 const gotLock = app.requestSingleInstanceLock();
@@ -160,26 +161,27 @@ function runCommand(cmd) {
 
 async function checkGatewayStatus() {
   return new Promise((resolve) => {
-    const socket = new net.Socket();
-    socket.setTimeout(1000); // 1-second timeout for local connection
-
-    socket.on('connect', () => {
-      socket.destroy();
+    // Attempt HTTP check first. We don't care about the body, just that it responds without a socket error.
+    const req = http.get('http://127.0.0.1:18789/', { timeout: 1000 }, (res) => {
+      // If we got any HTTP response, the server is up
       resolve(true);
+      res.resume(); // consume response data to free up memory
     });
 
-    socket.on('timeout', () => {
-      socket.destroy();
-      resolve(false);
+    req.on('timeout', () => { req.destroy(); resolve(false); });
+    req.on('error', (err) => { 
+      // If we get an error, it's likely ECONOMNREFUSED, so it's not ready
+      resolve(false); 
     });
-
-    socket.on('error', () => {
-      resolve(false);
-    });
-
-    // Gateway default WebSocket port is 18789
-    socket.connect(18789, '127.0.0.1');
   });
+}
+
+function stopGatewayAction() {
+  abortStartAttempt = true;
+  isProcessing = false;
+  processingAction = '';
+  stopBlinking();
+  updateTray();
 }
 
 async function gatewayAction(action) {
