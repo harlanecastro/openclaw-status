@@ -98,6 +98,7 @@ let tray = null;
 let isOnline = false;
 let isProcessing = false;
 let processingAction = '';
+let abortStartAttempt = false;
 let pollTimer = null;
 let blinkTimer = null;
 let blinkOn = false;
@@ -193,6 +194,9 @@ async function gatewayAction(action) {
   // Enter processing state
   isProcessing = true;
   processingAction = notifTitle;
+  if (action === 'start') {
+    abortStartAttempt = false;
+  }
   startBlinking();
   updateTray();
 
@@ -203,10 +207,10 @@ async function gatewayAction(action) {
     if (action === 'start' || action === 'stop' || action === 'restart') {
       try {
         if (process.platform === 'win32') {
-          await runCommand('taskkill /F /IM openclaw.exe /T');
-          await runCommand('taskkill /F /IM node.exe /FI "WINDOWTITLE eq openclaw*" /T');
+          await runCommand('taskkill /F /IM openclaw.exe /T', 10000);
+          await runCommand('taskkill /F /IM node.exe /FI "WINDOWTITLE eq openclaw*" /T', 10000);
         } else {
-          await runCommand('killall openclaw');
+          await runCommand('killall openclaw', 10000);
         }
       } catch (err) {
         // Ignorar erros caso não haja processo para matar
@@ -214,23 +218,42 @@ async function gatewayAction(action) {
     }
 
     if (action === 'start' || action === 'restart') {
-      await runCommand(`openclaw gateway start`);
+      try {
+        await runCommand(`openclaw gateway start`, 15000);
+      } catch (cmdErr) {
+        fs.appendFileSync(path.join(app.getPath('userData'), 'debug.log'), `CLI start command warning (ignoring if service responds): ${cmdErr.message || cmdErr.error}\n`);
+      }
+
+      // Infinite check loop for slow machines
+      let isUp = false;
+      while (!abortStartAttempt && !isUp) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        isUp = await checkGatewayStatus();
+      }
+      
+      if (abortStartAttempt) {
+        throw new Error("Start attempt aborted by user");
+      }
     }
 
     showNotification(t('app_name'), t(`gateway_${actionKey}_ok`));
   } catch (err) {
-    fs.appendFileSync(path.join(app.getPath('userData'), 'debug.log'), `Action ${action} Error: ${err.message || err.error}\nstderr: ${err.stderr}\n`);
-    showNotification(t('app_name'), t(`gateway_${actionKey}_fail`));
+    if (!abortStartAttempt) {
+      fs.appendFileSync(path.join(app.getPath('userData'), 'debug.log'), `Action ${action} Error: ${err.message || err.error}\nstderr: ${err.stderr || 'No stderr'}\n`);
+      showNotification(t('app_name'), t(`gateway_${actionKey}_fail`));
+    }
   }
 
-  // Exit processing state
-  isProcessing = false;
-  processingAction = '';
-  stopBlinking();
-  updateTray();
+  // Only run standard cleanup if we were not aborted (since abort cleans its own state up)
+  if (!abortStartAttempt || action !== 'start') {
+    isProcessing = false;
+    processingAction = '';
+    stopBlinking();
+  }
 
-  // Refresh status after action
-  setTimeout(pollStatus, 2000);
+  // Refresh status after action immediately
+  await pollStatus();
+  updateTray();
 }
 
 async function openDashboard() {
