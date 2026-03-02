@@ -41,5 +41,6 @@
     "gateway_stop_fail": "Failed to stop Gateway",
     "gateway_restart_fail": "Failed to restart Gateway",
     "tooltip_online": "OpenClaw - Online",
-    "tooltip_offline": "OpenClaw - Offline"
+    "tooltip_offline": "OpenClaw - Offline",
+    "stop_start_attempt": "Stop start attempt"
 }
