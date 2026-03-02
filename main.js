@@ -147,9 +147,9 @@ function stopBlinking() {
 }
 
 // ─── OpenClaw CLI ───────────────────────────────────────────────────────────
-function runCommand(cmd) {
+function runCommand(cmd, timeoutMs = 60000) {
   return new Promise((resolve, reject) => {
-    exec(cmd, { timeout: 15000, windowsHide: true }, (error, stdout, stderr) => {
+    exec(cmd, { timeout: timeoutMs, windowsHide: true }, (error, stdout, stderr) => {
       if (error) {
         reject({ error, stdout, stderr });
       } else {
